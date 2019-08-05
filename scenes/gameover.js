@@ -1,6 +1,6 @@
-class TitleScene extends Phaser.Scene {
+class GameOverScene extends Phaser.Scene {
     constructor() {
-        super({key: "Title"});
+        super({key: "GameOver"});
     }
 
     preload() {
@@ -8,10 +8,11 @@ class TitleScene extends Phaser.Scene {
     }
 
     create() {
+        
 
     }
 
     update() {
-        this.scene.start("Play");
+        game.scene.start("Title");
     }
 }

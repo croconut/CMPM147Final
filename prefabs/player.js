@@ -1,4 +1,4 @@
-class PlayableCharacter extends Phaser.Sprite {
+class PlayableCharacter extends Phaser.GameObjects.Sprite {
     constructor() {
 
     }

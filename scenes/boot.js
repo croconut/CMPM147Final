@@ -5,10 +5,12 @@ class BootScene extends Phaser.Scene {
 
     preload() {
         //this.load.image
+        this.load.image("tilemap", "assets/tileset.png");
+        this.load.spritesheet("chars", "assets/tileset.png", {frameWidth: 16, frameHeight: 16});
     }
 
     create() {
-        game.scene.start("Title");
+        this.scene.start("Title");
 
     }
 
