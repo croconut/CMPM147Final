@@ -6,7 +6,7 @@ class BootScene extends Phaser.Scene {
     preload() {
         //this.load.image
         this.load.image("tilemap", "assets/tileset.png");
-        this.load.spritesheet("chars", "assets/tileset.png", {frameWidth: 16, frameHeight: 16});
+        this.load.spritesheet("chars", "assets/tileset2.png", {frameWidth: 16, frameHeight: 16});
     }
 
     create() {

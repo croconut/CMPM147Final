@@ -16,6 +16,8 @@ window.onload = function() {
         }
     };
     game = new Phaser.Game(config);
+    game.width = 800;
+    game.height = 600;
     game.scene.add("Boot", boot);
     game.scene.add("Title", title);
     game.scene.add("Play", Play);
