@@ -13,6 +13,6 @@ class GameOverScene extends Phaser.Scene {
     }
 
     update() {
-        game.scene.start("Title");
+        //game.scene.start("Title");
     }
 }
