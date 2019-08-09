@@ -1,6 +1,6 @@
-let PCController = function(game, scene, txt, frame, config) {
+let PCController = function(game, scene, config) {
         //_pc is the sprite for PCController to control 
-        this._pc = scene.physics.add.sprite(game.width, game.height/2, txt, frame);
+        this._pc = scene.physics.add.sprite(config.posx, config.posy, config.text, config.frame);
         this._pc.maxX = config.maxX;
         this._pc.maxY = config.maxY;
         this._pc.hp = config.hp;
@@ -8,6 +8,7 @@ let PCController = function(game, scene, txt, frame, config) {
         this._pc.both = 0.71;
         //scene.cameras.main.setSize(game.width, game.height);
         scene.cameras.main.startFollow(this._pc);
+        scene.cameras.main.zoom = 2;
         this._pc.update = function() {
 
             //WASD MOVEMENT BEGIN
@@ -70,10 +71,16 @@ let PCController = function(game, scene, txt, frame, config) {
                 this.scene.start("GameOver");
             }
         };
+        this.leaveLevel = function(pc, exit) {
+            this.scene.start("Play");
+        }
         for (let i = 0; i < config.egroup.length; i++) {
             scene.physics.add.collider(this._pc, config.egroup[i], this.onEnemyCollision, null, scene);
         }
-        
+        for (let i = 0; i < config.collLayers.length; i++) {
+            scene.physics.add.collider(this._pc, config.collLayers[i]);
+        }
+        scene.physics.add.overlap(this._pc, scene.exit, this.leaveLevel, null, scene);
 
 };
 

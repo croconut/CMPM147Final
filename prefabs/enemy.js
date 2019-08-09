@@ -11,7 +11,16 @@ let EnemyController = function(game, scene, config) {
         this.frameC=(this.frameC+1)%1000;
         
     }
-    
+    this.onWallCollision = function(npc, wall) {
+        // npc.setVelocityX(-npc.body.velocity.x);
+        // npc.setVelocityY(-npc.body.velocity.y);
+        if (npc.frameC > 15) {
+            npc.frameC = 0;
+        }
+    }
+    for (let i = 0; i < config.collLayers.length; i++) {
+        scene.physics.add.collider(this._npc, config.collLayers[i], this.onWallCollision, null, scene);
+    }
     
     // group.add(this._npc);
     //for this gonna wanna init an AI from the next AI to init from the 
