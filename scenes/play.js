@@ -24,11 +24,10 @@ Play.prototype = {
         let cavegen = new CaveDataGenerator(this.mapH, this.mapW);
         cavegen.generate(6, this.floorHoles, this.floorRange);
         this.cave = cavegen.cells;
-        // console.log(this.cave);
-        this.validSpots = this.createValidVectors(this.cave);
-        // console.log(this.validSpots);
+        console.log(this.cave);
         this.layer3 = this.makeStaticLayer(this.cave);
         this.layer3.setCollisionBetween(258, 260);
+        this.createValidVectors(this.layer3);
         this.base = this.makeBase(function(scene, base, row, i, j) {
             if ((i == 0 || i == scene.mapH - 1) && (j != 0 && j != scene.mapH - 1) )
                 return scene.wall[0];
@@ -51,9 +50,9 @@ Play.prototype = {
         this.layer2.setOrigin(0.5);
         this.layer3.setOrigin(0.5);
         let z = Phaser.Math.RND.integerInRange(Math.floor(this.validSpots.length/4), this.validSpots.length);
-        this.exitPos = this.validSpots.splice(z)[0];
-        z = Phaser.Math.RND.integerInRange(0, Math.floor(this.validSpots.length/4));
-        this.entrancePos = this.validSpots.splice(z)[0];
+        this.exitPos = this.validSpots[z];
+        z = Phaser.Math.RND.integerInRange(0, Math.floor(this.validSpots.length/5));
+        this.entrancePos = this.validSpots[z];
         // pass the pccontroller a game reference, a scene reference and texture/frame
         //if no frame number pass null
         this.egroup = this.add.group({runChildUpdate: true});
@@ -66,15 +65,16 @@ Play.prototype = {
         }
         //8 offset so its centered and no player adj needed
         //8 is 
-        this.entrance = this.add.sprite(this.entrancePos.x-(this.tileSize/2), this.entrancePos.y-this.tileSize, "chars", this.ladder[0]);
-        this.entrance1 = this.add.sprite(this.entrancePos.x-(this.tileSize/2), this.entrancePos.y, "chars", this.ladder[1]);
+        this.entrance = this.add.sprite(this.entrancePos.x, this.entrancePos.y-this.tileSize, "chars", this.ladder[0]);
+        this.entrance1 = this.add.sprite(this.entrancePos.x, this.entrancePos.y, "chars", this.ladder[1]);
         
         this.exit = this.physics.add.sprite(this.exitPos.x, this.exitPos.y, "chars", this.exitTile[0]);
         game.playerConfig.egroup = [this.egroup];
         game.playerConfig.collLayers = [this.layer2, this.layer3];
-        game.playerConfig.posx = this.entrance1.x;
-        game.playerConfig.posy = this.entrance1.y;
+        game.playerConfig.posx = this.entrancePos.x;
+        game.playerConfig.posy = this.entrancePos.y;
         this.pc = new PCController(game, this, game.playerConfig);
+        this.npcBrains = new NEATPopulation(game, this.pc._pc, this, this.egroup.children);
     },
     update: function() {
 
@@ -98,17 +98,12 @@ Play.prototype = {
         }
         return base;
     },
-    createValidVectors: function(cave) {
-        let toReturn = [];
-        for (let y = 2; y < cave.length - 3; y++) {
-            for (let x = 2; x < cave.length - 3; x++) {
-                if (cave[y][x] != this.floorHoles[0]) {
-                    let v = new Phaser.Math.Vector2((x+1)*this.tileSize, y*this.tileSize);
-                    toReturn.push(v);
-                }
-            }
-        }
-        return toReturn;
+    createValidVectors: function(layer) {
+        this.validSpots = [];
+        layer.forEachTile(function(tile) { 
+            if (tile.index < 200 && tile.index != -1)
+                this.validSpots.push({x:tile.pixelX + 8, y:tile.pixelY + 8});
+        }, this);
     }
 }
 
