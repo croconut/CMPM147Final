@@ -24,9 +24,9 @@ Play.prototype = {
         let cavegen = new CaveDataGenerator(this.mapH, this.mapW);
         cavegen.generate(6, this.floorHoles, this.floorRange);
         this.cave = cavegen.cells;
-        console.log(this.cave);
+        // console.log(this.cave);
         this.validSpots = this.createValidVectors(this.cave);
-        console.log(this.validSpots);
+        // console.log(this.validSpots);
         this.layer3 = this.makeStaticLayer(this.cave);
         this.layer3.setCollisionBetween(258, 260);
         this.base = this.makeBase(function(scene, base, row, i, j) {
