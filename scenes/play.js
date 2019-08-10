@@ -29,8 +29,6 @@ Play.prototype = {
         }, this.floorRange);
         this.layer1 = this.makeStaticLayer(this.base);
         // this.layer2 = this.makeStaticLayer(this.base2);
-        // pass the pccontroller a game reference, a scene reference and texture/frame
-        //if no frame number pass null
         this.egroup = this.add.group({runChildUpdate: true});
         this.allE = [];
         for (let i = 0; i < this.egroupSize; i++) {
@@ -41,16 +39,8 @@ Play.prototype = {
             // this.allE.push(n);
             this.egroup.add(n._npc);
         }
-        // let x = Phaser.Math.RND.integerInRange(0, this.absLimitX);
-        // let y = Phaser.Math.RND.integerInRange(0, this.absLimitY);
-        // let c = {posx:x, posy:y, maxX:20, maxY:20, frame:50, text:"chars"};
-        // this.allE.push(new EnemyController(game, this, c));
-        // this.e = new EnemyController(game, this, c);
-        
+
         this.pc = new PCController(game, this, "chars", 303, {maxX:100, maxY:100, hp:20, egroup:[this.egroup]});
-        // this.ene = this.physics.add.sprite(c.posx, c.posy, c.text, c.frame);
-        //should be using this fn to access player
-        // console.log(this.ene);
     },
     update: function() {
 
