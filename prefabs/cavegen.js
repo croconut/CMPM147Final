@@ -53,11 +53,16 @@ class CaveDataGenerator {
             this.cells = nextgen;
             this.generation++;
          }
-         for (let x = 1; x < this.columns - 1; x++) {
-             for (let y = 1; y < this.rows - 1; y++) {
-                 this.cells[x][y] = this.cells[x][y]? 
-                    holes[Phaser.Math.RND.integerInRange(0, holes.length - 1)]: 
-                    floor[Phaser.Math.RND.integerInRange(0, floor.length - 1)];
+         for (let x = 0; x < this.columns; x++) {
+             for (let y = 0; y < this.rows; y++) {
+                 if (!x || !y || x == this.columns - 1 || y == this.rows - 1) {
+                    this.cells[x][y] = -1; 
+                 }
+                 else {
+                    this.cells[x][y] = this.cells[x][y]? 
+                        holes[Phaser.Math.RND.integerInRange(0, holes.length - 1)]: 
+                        floor[Phaser.Math.RND.integerInRange(0, floor.length - 1)];
+                 } 
              }
          }
      }
