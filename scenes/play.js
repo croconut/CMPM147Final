@@ -21,15 +21,6 @@ Play.prototype = {
         this.wall = [33, 256, 257, 288, 289];
         this.ladder = [39, 71];
         // noise.seed(Math.random());
-<<<<<<< HEAD
-        
-        this.greeting = this.add.text(200, 200, "Hello!");
-        this.base = this.makeBase(function(arr, base, row, i, j) {
-            return arr[Phaser.Math.RND.integerInRange(0, arr.length - 1)];
-        }, this.floorRange);
-        this.layer1 = this.makeStaticLayer(this.base);
-        // this.layer2 = this.makeStaticLayer(this.base2);
-=======
         let cavegen = new CaveDataGenerator(this.mapH, this.mapW);
         cavegen.generate(6, this.floorHoles, this.floorRange);
         this.cave = cavegen.cells;
@@ -65,7 +56,6 @@ Play.prototype = {
         this.entrancePos = this.validSpots.splice(z)[0];
         // pass the pccontroller a game reference, a scene reference and texture/frame
         //if no frame number pass null
->>>>>>> ffb9039547f095668fe33e1faa78e36fb79a3f13
         this.egroup = this.add.group({runChildUpdate: true});
         for (let i = 0; i < this.egroupSize; i++) {
             let x = Phaser.Math.RND.integerInRange(0, this.absLimitX);
@@ -74,10 +64,6 @@ Play.prototype = {
             let n = new EnemyController(game, this, c);
             this.egroup.add(n._npc);
         }
-<<<<<<< HEAD
-
-        this.pc = new PCController(game, this, "chars", 303, {maxX:100, maxY:100, hp:20, egroup:[this.egroup]});
-=======
         //8 offset so its centered and no player adj needed
         //8 is 
         this.entrance = this.add.sprite(this.entrancePos.x-(this.tileSize/2), this.entrancePos.y-this.tileSize, "chars", this.ladder[0]);
@@ -89,7 +75,6 @@ Play.prototype = {
         game.playerConfig.posx = this.entrance1.x;
         game.playerConfig.posy = this.entrance1.y;
         this.pc = new PCController(game, this, game.playerConfig);
->>>>>>> ffb9039547f095668fe33e1faa78e36fb79a3f13
     },
     update: function() {
 
