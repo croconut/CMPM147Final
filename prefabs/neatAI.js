@@ -1,50 +1,72 @@
 var Neat = neataptic.Neat;
-var Methods = neataptic.Methods;
-var Config  = neataptic.Config;
-var Architect = neataptic.Architect;
+var Methods = neataptic.methods;
+var Config  = neataptic.config;
+var Architect = neataptic.architect;
 
 class NEATPopulation {
-    constructor(player, mouse, sprites) {
+    constructor(inp, outp, fitnessFn, enemySize) {
         //need to pass the sprite itself to the class so it can get a reference and make
         //changes as it sees fit
-        this.mouse = mouse;
-        this.player = player;
-        this.sprites = sprites;
-    }
-    init() {
+        this.in = inp;
+        this.out = outp;
+        this.fitnessFn = fitnessFn;
+        this.enemySize = enemySize;
         //inputs are npc pos x/y vel x/y, pc pos x/y vel x/y, mouse pos x/y (10 total)
         //outputs are acceleration (0 - 1) and angle (0 - 360) (2 total)
         let options = {
-            popsize: this.sprites.length,
+            popsize: this.enemySize,
             mutation: [
-                Methods.Mutation.ADD_NODE,
-                Methods.Mutation.SUB_NODE,
-                Methods.Mutation.ADD_CONN,
-                Methods.Mutation.SUB_CONN,
-                Methods.Mutation.MOD_WEIGHT,
-                Methods.Mutation.MOD_BIAS,
-                Methods.Mutation.MOD_ACTIVATION,
-                Methods.Mutation.ADD_GATE,
-                Methods.Mutation.SUB_GATE,
-                Methods.Mutation.ADD_SELF_CONN,
-                Methods.Mutation.SUB_SELF_CONN,
-                Methods.Mutation.ADD_BACK_CONN,
-                Methods.Mutation.SUB_BACK_CONN
+                Methods.mutation.ADD_NODE,
+                Methods.mutation.SUB_NODE,
+                Methods.mutation.ADD_CONN,
+                Methods.mutation.SUB_CONN,
+                Methods.mutation.MOD_WEIGHT,
+                Methods.mutation.MOD_BIAS,
+                Methods.mutation.MOD_ACTIVATION,
+                Methods.mutation.ADD_GATE,
+                Methods.mutation.SUB_GATE,
+                Methods.mutation.ADD_SELF_CONN,
+                Methods.mutation.SUB_SELF_CONN,
+                Methods.mutation.ADD_BACK_CONN,
+                Methods.mutation.SUB_BACK_CONN
               ],
-            elitism: Math.round(this.sprites.length * 0.1)
+            elitism: Math.round(this.enemySize * 0.1),
+            network: new Architect.Random(
+                this.in,
+                1,
+                this.out
+              )
         };
         //if setting fitnessFunction to null instead need to manually update score
         //when performing fitness checks to evolve
-        this.ai = new Neat(10, 2, null, options);
-        for (let i in this.sprites) {
-            this.sprites[i].brain = this.ai.population[i];
+        this.ai = new Neat(this.in, this.out, this.fitnessFn, options);
+        this.ai.mutate();
+
+    }
+
+    assignBrains(sprites) {
+        for (let i in sprites) {
+            let sprite = sprites[i];
+            sprite.brain = this.ai.population[i];
+            sprite.brain.score = 0;
         }
     }
-
-    run(npc) {
-        if (Phaser.Math.Distance.between(npc.x, npc.y, this.player.x, this.player.y) < 250) {
-            //can run the brain, else do nothing
-        } 
+    
+    evo(sprites) {
+        //this is pretty similar to the target-seeking example for neataptic
+        this.ai.sort();
+        var newPop = [];
+        //no elitism for now
+        for(let i = 0; i < this.ai.elitism; i++) {
+            newPop.push(this.ai.population[i]);
+        }
+        
+        for(let i = this.ai.elitism; i < this.ai.population.length; i++) {
+            newPop.push(this.ai.getOffspring());
+        }
+        this.ai.population = newPop;
+        this.ai.mutate();
+        this.ai.generation++;
+        game.npcBrains.assignBrains(sprites);
     }
-
 }

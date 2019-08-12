@@ -4,6 +4,7 @@ let PCController = function(game, scene, config) {
         this._pc.maxX = config.maxX;
         this._pc.maxY = config.maxY;
         this._pc.hp = config.hp;
+        this._pc.immunityTimer = 0;
         //const
         this._pc.both = 0.71;
         //scene.cameras.main.setSize(game.width, game.height);
@@ -55,7 +56,9 @@ let PCController = function(game, scene, config) {
                 this.setVelocityY(0);
             }
             // WASD MOVEMENT END
-            
+            if (this.immunityTimer) {
+                this.immunityTimer--;
+            }
         } 
         // this._pc.setCollideWorldBounds(true);
         scene.pcGroup = scene.add.group({runChildUpdate: true});
@@ -64,8 +67,12 @@ let PCController = function(game, scene, config) {
             return this._pc;
         };
         this.onEnemyCollision = function(pc, baddie) {
+            if (pc.immunityTimer) {
+                return;
+            }
+            pc.immunityTimer = 30;
             pc.hp -= baddie.damage | 1;
-            baddie.destroy();
+            //baddie.destroy();
             console.log(pc.hp);
             if (!(pc.hp > 0)) {
                 this.scene.start("GameOver");
@@ -74,9 +81,11 @@ let PCController = function(game, scene, config) {
         this.leaveLevel = function(pc, exit) {
             this.scene.start("Play");
         }
-        for (let i = 0; i < config.egroup.length; i++) {
-            scene.physics.add.collider(this._pc, config.egroup[i], this.onEnemyCollision, null, scene);
-        }
+        this.addEnemies = function(egroup) {
+            for (let i = 0; i < egroup.length; i++) {
+                scene.physics.add.overlap(this._pc, egroup[i], this.onEnemyCollision, null, scene);
+            }
+        }     
         for (let i = 0; i < config.collLayers.length; i++) {
             scene.physics.add.collider(this._pc, config.collLayers[i]);
         }

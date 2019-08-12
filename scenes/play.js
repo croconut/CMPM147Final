@@ -7,13 +7,14 @@ Play.prototype = {
     create: function() {
         //NOTE: PLAYER NEEDS TO BE A GLOBAL VARIABLE AND ALL THE GARBAGE HES GONNA 
         //DRAG WITH HIM, like difficulty, weapons, the AIs
+        game.level++;
         this.mapH = 100;
         this.mapW = this.mapH;
         this.tileSize = 16;
         this.absLimitX = this.mapH * 16;
         this.absLimitY = this.absLimitX;
-        this.egroupSize = 15;
         this.counter = 0;
+        this.timerC = 0;
         this.floorRange = [129, 130, 131, 162, 163, 193, 194];
         this.floorHoles = [259];
         //removed 161 cuz i don't like that tile
@@ -49,34 +50,47 @@ Play.prototype = {
         this.layer2.setCollisionBetween(0, 512);
         this.layer2.setOrigin(0.5);
         this.layer3.setOrigin(0.5);
-        let z = Phaser.Math.RND.integerInRange(Math.floor(this.validSpots.length/4), this.validSpots.length);
+        let z = Phaser.Math.RND.integerInRange(Math.floor(this.validSpots.length/4), this.validSpots.length - 1);
         this.exitPos = this.validSpots[z];
         z = Phaser.Math.RND.integerInRange(0, Math.floor(this.validSpots.length/5));
         this.entrancePos = this.validSpots[z];
         // pass the pccontroller a game reference, a scene reference and texture/frame
         //if no frame number pass null
-        this.egroup = this.add.group({runChildUpdate: true});
-        for (let i = 0; i < this.egroupSize; i++) {
-            let x = Phaser.Math.RND.integerInRange(0, this.absLimitX);
-            let y = Phaser.Math.RND.integerInRange(0, this.absLimitY);
-            let c = {posx:x, posy:y, maxX:20, maxY:20, frame:50, text:"chars",  collLayers:[this.layer2]};
-            let n = new EnemyController(game, this, c);
-            this.egroup.add(n._npc);
-        }
+        
         //8 offset so its centered and no player adj needed
         //8 is 
         this.entrance = this.add.sprite(this.entrancePos.x, this.entrancePos.y-this.tileSize, "chars", this.ladder[0]);
         this.entrance1 = this.add.sprite(this.entrancePos.x, this.entrancePos.y, "chars", this.ladder[1]);
         
         this.exit = this.physics.add.sprite(this.exitPos.x, this.exitPos.y, "chars", this.exitTile[0]);
-        game.playerConfig.egroup = [this.egroup];
         game.playerConfig.collLayers = [this.layer2, this.layer3];
         game.playerConfig.posx = this.entrancePos.x;
         game.playerConfig.posy = this.entrancePos.y;
         this.pc = new PCController(game, this, game.playerConfig);
-        this.npcBrains = new NEATPopulation(game, this.pc._pc, this, this.egroup.children);
+        this.egroup = this.add.group({runChildUpdate: true});
+        for (let i = 0; i < game.enemySize; i++) {
+            let xy = Phaser.Math.RND.integerInRange(0, this.validSpots.length - 1);
+            let pos = this.validSpots[xy];
+            let c = {posx:pos.x, posy:pos.y, maxX:120, maxY:120, hp: 5, resistances: [20, 15, 0], 
+                frame:50, sceneRef: this, text:"chars", playerRef:this.pc._pc, 
+                collLayers:[this.layer2], aRange:100};
+            let n = new EnemyController(game, this, c);
+            this.egroup.add(n._npc);
+        }
+        
+        this.pc.addEnemies([this.egroup]);
+        game.npcBrains.assignBrains(this.egroup.children.entries);
     },
     update: function() {
+        //every 3 seconds wanna evaluate
+        this.timerC++;
+        if (!(this.timerC % 180)) {
+            game.npcBrains.evo(this.egroup.children.entries);
+            
+            //need to run evaluate for each 
+            this.timerC = 0;
+        }
+        
 
     },
     makeStaticLayer: function(base) {
