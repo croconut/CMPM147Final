@@ -9,24 +9,31 @@ let EnemyController = function(game, scene, config) {
     this._npc.playerRef = config.playerRef;
     this._npc.sceneRef = config.sceneRef;
     this._npc.resistances = config.resistances;
+    this._npc.hp = config.hp;
+    this._npc.setSize(8, 16);
     this._npc.score = function(dist) {
-        //wanna stay about 25 pixels closer than our maximum attack range
+        //offset so we can't div by zero
         return 1 / (dist + 0.0001);
     };
     this._npc.update = function() {
         let dist = Phaser.Math.Distance.Between(this.x, this.y, this.playerRef.x, this.playerRef.y);
         if (dist < 1600) {
-            //can run the brain, else do nothing
-            let angle = Phaser.Math.Angle.Between(this.x, this.y, this.playerRef.x, this.playerRef.y)/ (2 * Math.PI);
+            //the angle is 1/2 of the correct angle
+            //brain'll figure it out anyways
+            let angle = Phaser.Math.Angle.Between(this.x, this.y, this.playerRef.x, this.playerRef.y)/ (4 * Math.PI);
             let input = [this.x / 1600, this.y / 1600, this.playerRef.x / 1600, this.playerRef.y / 1600, 
                 angle, dist / 1600];
             // AHHHHHHHHHH inputs HAVE to be between 0 and 1
             let output = this.brain.activate(input);
             //radian conversion
             output = output[0] * 2 * Math.PI;
+            //face direction of movement
+            this.rotation = output + (Math.PI / 2);
             //get outputs and move the npc
-            this.setVelocityX(Math.cos(output) *this.maxX);
-            this.setVelocityY(Math.sin(output) *this.maxY);
+            let x = Math.cos(output) *this.maxX;
+            let y = Math.sin(output) *this.maxX;
+            this.setVelocityX(x);
+            this.setVelocityY(y); 
             //reexamine the distance for the score
             dist = Phaser.Math.Distance.Between(this.x, this.y, this.playerRef.x, this.playerRef.y);
             //score should check distance to attack range and check how long was able to stay alive
@@ -39,17 +46,17 @@ let EnemyController = function(game, scene, config) {
             this.setVelocityX(0);
             this.setVelocityY(0);
         }
-        if (dist < this.aRange) {
-            if (!(this.aTimer % this.aSpeed)) {
-                //spawn the attack sprite
-                //also need to set the overlap logic from player - should just be a call to a 
-                //new collision with player
+        // if (dist < this.aRange) {
+        //     if (!(this.aTimer % this.aSpeed)) {
+        //         //spawn the attack sprite
+        //         //also need to set the overlap logic from player - should just be a call to a 
+        //         //new collision with player
 
-                this.aTimer = 0;
-            }
-            this.aTimer++;
+        //         this.aTimer = 0;
+        //     }
+        //     this.aTimer++;
             
-        }
+        // }
         
     };
     this.onWallCollision = function(npc, wall) {
@@ -59,10 +66,22 @@ let EnemyController = function(game, scene, config) {
         //     npc.frameC = 0;
         // }
     }
-    for (let i = 0; i < config.collLayers.length; i++) {
-        scene.physics.add.collider(this._npc, config.collLayers[i], this.onWallCollision, null, scene);
+    this.ouch = function(npc, proj) {
+        npc.hp -= proj.damage;
+        this.pgroup.remove(proj, true, true);
+        console.log(npc.hp);
+        if (npc.hp <= 0) {
+            this.egroup.remove(npc, true, true);
+            game.enemySize--;
+            game.npcBrains.evo(this.egroup.children.entries);
+        }
     }
-    
+    for (let layer of config.collLayers) {
+        scene.physics.add.collider(this._npc, layer, this.onWallCollision, null, scene);
+    }
+    for (let proj of config.pGroup ) {
+        scene.physics.add.overlap(this._npc, proj, this.ouch, null, scene);
+    }
     // group.add(this._npc);
     //for this gonna wanna init an AI from the next AI to init from the 
     //scenes AI group, then gonna use that AI's output to determine its 

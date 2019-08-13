@@ -7,6 +7,10 @@ Play.prototype = {
     create: function() {
         //NOTE: PLAYER NEEDS TO BE A GLOBAL VARIABLE AND ALL THE GARBAGE HES GONNA 
         //DRAG WITH HIM, like difficulty, weapons, the AIs
+        this.music = this.sound.add("gameLoop", {volume:0.7, loop:true});
+        this.slash = this.sound.add('slash');
+        this.shock = this.sound.add('electricity');
+        this.music.play();
         game.level++;
         this.mapH = 100;
         this.mapW = this.mapH;
@@ -68,29 +72,43 @@ Play.prototype = {
         game.playerConfig.posy = this.entrancePos.y;
         this.pc = new PCController(game, this, game.playerConfig);
         this.egroup = this.add.group({runChildUpdate: true});
+        this.pgroup = this.add.group({runChildUpdate: true});
+        game.playerConfig.pGroup = this.pgroup;
         for (let i = 0; i < game.enemySize; i++) {
             let xy = Phaser.Math.RND.integerInRange(0, this.validSpots.length - 1);
             let pos = this.validSpots[xy];
-            let c = {posx:pos.x, posy:pos.y, maxX:120, maxY:120, hp: 5, resistances: [20, 15, 0], 
-                frame:50, sceneRef: this, text:"chars", playerRef:this.pc._pc, 
-                collLayers:[this.layer2], aRange:100};
+            let c = {posx:pos.x, posy:pos.y, maxX:100 + game.level * 2, maxY:100 + game.level * 2, resistances: [20, 15, 0], 
+                frame:50, sceneRef: this, text:"chars", playerRef:this.pc._pc, pGroup:[this.pgroup],
+                collLayers:[this.layer2], aRange:100, hp:2 * game.level * 0.5};
             let n = new EnemyController(game, this, c);
             this.egroup.add(n._npc);
         }
         
         this.pc.addEnemies([this.egroup]);
         game.npcBrains.assignBrains(this.egroup.children.entries);
+        this.input.mouse.disableContextMenu();
+        this.mouseEvent = this.input.on('pointerdown', function (pointer) {
+            if (pointer.rightButtonDown()) {
+                this.pc.blink(pointer.x, pointer.y);
+            }
+            else {
+                this.pc.attack(pointer.x, pointer.y);
+            }
+        }, this);
     },
     update: function() {
         //every 3 seconds wanna evaluate
         this.timerC++;
         if (!(this.timerC % 180)) {
-            game.npcBrains.evo(this.egroup.children.entries);
-            
+            game.npcBrains.evo(this.egroup.children.entries);   
             //need to run evaluate for each 
             this.timerC = 0;
         }
-        
+        //this should probably be done outside the player loop
+        if (!(this.timerC % 60) && this.pc._pc.mana < this.pc._pc.manaMax) {
+            this.pc._pc.mana++;
+        }
+         
 
     },
     makeStaticLayer: function(base) {

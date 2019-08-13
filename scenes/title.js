@@ -35,12 +35,16 @@ class TitleScene extends Phaser.Scene {
         game.enemySize = 50;
         game.npcBrains = new NEATPopulation(6, 1, null, game.enemySize);
         game.playerConfig = {
-            text:"chars",frame:303,maxX:100,maxY:100,hp:10 };
+            text:"chars",frame:303,maxX:100,maxY:100,hp:10, mana:50, manaMax:50, aSpeed: 300,
+            aRange: 200, damage:1, aRate:20, pScale:0.5};
+        this.music = this.sound.add("titleLoop", {volume:1, loop: true});
+        this.music.play();
 
     }
 
     update() {
         if (this.input.keyboard.addKey('SPACE').isDown) {
+            this.music.stop();
             this.scene.start("Play");
         }
     }
