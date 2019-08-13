@@ -8,18 +8,10 @@ class TitleScene extends Phaser.Scene {
     }
 
     create() {
-        game.level = 0;
-        game.score = 0;
-        game.enemySize = 50;
-        game.npcBrains = new NEATPopulation(6, 1, null, game.enemySize);
-        game.playerConfig = {
-            text:"chars",frame:303,maxX:100,maxY:100,hp:10 };
-
         let font = { fontFamily: '"Courier New", Verdana, Tahoma'};
-
         this.lostText = this.add.text(game.width/2, game.height/4, "STABBED TO DEATH", font);
         this.lostText.setFontSize(48);
-        this.lostText2 = this.add.text(game.width/2, game.height/1.7, "CONTROLS: WASD to move\n\n          Left-Click to attack\n\n          Right-Click to teleport", font);
+        this.lostText2 = this.add.text(game.width/2, game.height/1.7, "CONTROLS: WASD to move\n\n          Left-Click to attack\n\n          Right-Click to teleport\n\n              (can only teleport onto the ladder)", font);
         this.restartText = this.add.text(game.width/2, 4*game.height/5, "Press <SPACE> to play!", font);
         this.otherText = this.add.text(game.width/2, game.height/2.5, "Get to the next level by finding the ladder. Good Luck...", font);
         this.otherText.setOrigin(0.5);
@@ -30,12 +22,13 @@ class TitleScene extends Phaser.Scene {
         this.lostText2.setOrigin(0.5);
         this.restartText.setOrigin(0.5);
         //stuff that needs to be reset goes here
-        game.level = 0;
+        game.level = 1;
         game.score = 0;
+        game.kills = 0;
         game.enemySize = 50;
         game.npcBrains = new NEATPopulation(6, 1, null, game.enemySize);
         game.playerConfig = {
-            text:"chars",frame:303,maxX:100,maxY:100,hp:10, mana:50, manaMax:50, aSpeed: 300,
+            text:"chars",frame:303,maxX:100,maxY:100,hp:10,hpMax:10,mana:50, manaMax:50, aSpeed: 300,
             aRange: 200, damage:1, aRate:20, pScale:0.5};
         this.music = this.sound.add("titleLoop", {volume:1, loop: true});
         this.music.play();

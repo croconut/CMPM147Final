@@ -7,11 +7,11 @@ Play.prototype = {
     create: function() {
         //NOTE: PLAYER NEEDS TO BE A GLOBAL VARIABLE AND ALL THE GARBAGE HES GONNA 
         //DRAG WITH HIM, like difficulty, weapons, the AIs
+        // game.enemySize = 50;
         this.music = this.sound.add("gameLoop", {volume:0.7, loop:true});
         this.slash = this.sound.add('slash');
         this.shock = this.sound.add('electricity');
         this.music.play();
-        game.level++;
         this.mapH = 100;
         this.mapW = this.mapH;
         this.tileSize = 16;
@@ -65,11 +65,11 @@ Play.prototype = {
         //8 is 
         this.entrance = this.add.sprite(this.entrancePos.x, this.entrancePos.y-this.tileSize, "chars", this.ladder[0]);
         this.entrance1 = this.add.sprite(this.entrancePos.x, this.entrancePos.y, "chars", this.ladder[1]);
-        
         this.exit = this.physics.add.sprite(this.exitPos.x, this.exitPos.y, "chars", this.exitTile[0]);
         game.playerConfig.collLayers = [this.layer2, this.layer3];
         game.playerConfig.posx = this.entrancePos.x;
         game.playerConfig.posy = this.entrancePos.y;
+        game.playerConfig.exitP = {x:this.exitPos.x, y:this.exitPos.y};
         this.pc = new PCController(game, this, game.playerConfig);
         this.egroup = this.add.group({runChildUpdate: true});
         this.pgroup = this.add.group({runChildUpdate: true});
@@ -95,6 +95,12 @@ Play.prototype = {
                 this.pc.attack(pointer.x, pointer.y);
             }
         }, this);
+        this.uigroup = this.add.group({runChildUpdate:true});
+        let hpBar = this.UIbar("chars", 44, 25,0, this.pc._pc.hp, this);
+        console.log(hpBar);
+        let mpBar = this.UIbar("chars", 42, 40,0, this.pc._pc.mp, this);
+        this.uigroup.add(hpBar);
+        this.uigroup.add(mpBar);
     },
     update: function() {
         //every 3 seconds wanna evaluate
@@ -103,10 +109,16 @@ Play.prototype = {
             game.npcBrains.evo(this.egroup.children.entries);   
             //need to run evaluate for each 
             this.timerC = 0;
+            if (this.pc._pc.hp.cur < this.pc._pc.hp.max) {
+                this.pc._pc.hp.cur+= 0.2;
+            }
+            else {
+                this.pc._pc.hp.cur = this.pc._pc.hp.max;
+            }
         }
         //this should probably be done outside the player loop
-        if (!(this.timerC % 60) && this.pc._pc.mana < this.pc._pc.manaMax) {
-            this.pc._pc.mana++;
+        if (!(this.timerC % 60) && this.pc._pc.mp.cur < this.pc._pc.mp.max) {
+            this.pc._pc.mp.cur++;
         }
          
 
@@ -136,6 +148,20 @@ Play.prototype = {
             if (tile.index < 200 && tile.index != -1)
                 this.validSpots.push({x:tile.pixelX + 8, y:tile.pixelY + 8});
         }, this);
+    },
+    UIbar: function(text, frame, w, h, cur, scene) {
+        let spr = scene.add.sprite(w, h, text, frame);
+        spr.bar = cur;
+        spr.w = w;
+        spr.h = h;
+        spr.scene = scene;
+        spr.displayHeight = 15;
+        spr.update = function() {
+            this.x = this.scene.cameras.main.scrollX + this.scene.cameras.main.width / 2;
+            this.y = this.scene.cameras.main.scrollY + this.w + this.scene.cameras.main.height / 1.5;
+            this.displayWidth = 200 * (this.bar.cur / this.bar.max);
+        }
+        return spr;
     }
 }
 

@@ -10,17 +10,18 @@ let EnemyController = function(game, scene, config) {
     this._npc.sceneRef = config.sceneRef;
     this._npc.resistances = config.resistances;
     this._npc.hp = config.hp;
+    this._npc.prevDist = Phaser.Math.Distance.Between(this._npc.x, this._npc.y, this._npc.playerRef.x, this._npc.playerRef.y);
     this._npc.setSize(8, 16);
     this._npc.score = function(dist) {
-        //offset so we can't div by zero
-        return 1 / (dist + 0.0001);
+        //adding the difference between the difference last frame and the distance this frame
+        return this.prevDist - dist;
     };
     this._npc.update = function() {
         let dist = Phaser.Math.Distance.Between(this.x, this.y, this.playerRef.x, this.playerRef.y);
         if (dist < 1600) {
             //the angle is 1/2 of the correct angle
             //brain'll figure it out anyways
-            let angle = Phaser.Math.Angle.Between(this.x, this.y, this.playerRef.x, this.playerRef.y)/ (4 * Math.PI);
+            let angle = Phaser.Math.Angle.Between(this.x, this.y, this.playerRef.x, this.playerRef.y)/ (2 * Math.PI);
             let input = [this.x / 1600, this.y / 1600, this.playerRef.x / 1600, this.playerRef.y / 1600, 
                 angle, dist / 1600];
             // AHHHHHHHHHH inputs HAVE to be between 0 and 1
@@ -35,17 +36,16 @@ let EnemyController = function(game, scene, config) {
             this.setVelocityX(x);
             this.setVelocityY(y); 
             //reexamine the distance for the score
-            dist = Phaser.Math.Distance.Between(this.x, this.y, this.playerRef.x, this.playerRef.y);
+            
             //score should check distance to attack range and check how long was able to stay alive
             //score should increase for every second brain was able to stay alive and in attack range
-
-
             this.brain.score += this.score(dist);
         }
         else {
             this.setVelocityX(0);
             this.setVelocityY(0);
         }
+        this.prevDist = dist;
         // if (dist < this.aRange) {
         //     if (!(this.aTimer % this.aSpeed)) {
         //         //spawn the attack sprite

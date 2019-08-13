@@ -3,13 +3,15 @@ let PCController = function(game, scene, config) {
         this._pc = scene.physics.add.sprite(config.posx, config.posy, config.text, config.frame);
         this._pc.maxX = config.maxX;
         this._pc.maxY = config.maxY;
-        this._pc.hp = config.hp;
+        this._pc.hp = {cur:config.hp, max:config.hpMax};
+        this._pc.mp = {cur:config.mana, max:config.manaMax};
         this._pc.aRate = config.aRate;
         this._pc.aRange = config.aRange;
         this._pc.speed = config.aSpeed;
         this._pc.damage = config.damage;
         this._pc.pGroup = config.pGroup;
         this._pc.pScale = config.pScale;
+        this._pc.exitP = config.exitP;
         this._pc.immunityTimer = 0;
         this._pc.atkTimer = 0;
         //this should be treated as a constant :p
@@ -80,29 +82,47 @@ let PCController = function(game, scene, config) {
             }
             this.slash.play();
             pc.immunityTimer = 30;
-            pc.hp -= baddie.damage | 1;
+            pc.hp.cur -= baddie.damage | 1;
             //baddie.destroy();
             console.log(pc.hp);
-            if (!(pc.hp > 0)) {
+            if (!(pc.hp.cur > 0)) {
                 this.music.stop();
                 this.scene.start("GameOver");
             }
         };
         this.leaveLevel = function(pc, exit) {
             this.music.stop();
-            this.scene.start("Play");
+            this.scene.start("LevelUp");
         }
         this.blink = function(x, y) {
-            if (this._pc.mana < 25) {
+            if (this._pc.mp.cur < 25) {
                 return;
+            }
+            let x0 = x - 400;
+            let y0 = y - 300;
+            if (x0 != 0) {
+                x0 /= 2;
+            }
+            if (y0 != 0) {
+                y0 /= 2;
+            }
+            // console.log(this._pc.body.x, this._pc.body.y);
+            x0 += this._pc.body.x;
+            y0 += this._pc.body.y;
+            let dist = Phaser.Math.Distance.Between(x0, y0, this._pc.exitP.x, this._pc.exitP.y);
+            console.log(x0, y0, dist);
+            if (dist < 60) {
+                scene.scene.start("LevelUp");
+                // this._pc.setPosition(x0, y0);
             }
             //do stuff
         }
         this.attack = function(x, y) {
-            if (this._pc.atkTimer || this._pc.mana < 4) {
+            if (this._pc.atkTimer || this._pc.mp.cur < 4) {
                 return;
             }
-            this._pc.mana -= 5;
+            this._pc.mp.cur -= 5;
+            console.log(this._pc.mp.cur);
             this._pc.atkTimer = this._pc.aRate;
             scene.shock.play();
             let config = {text:"chars", frame:294, destx:x, desty:y, pcx:this._pc.x, pcy:this._pc.y, 
