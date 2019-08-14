@@ -13,6 +13,8 @@ let PCController = function(game, scene, config) {
         this._pc.pScale = config.pScale;
         this._pc.exitP = config.exitP;
         this._pc.pierce = config.pierce;
+        this._pc.color = config.color;
+        this._pc.coords = config.coords;
         this._pc.immunityTimer = 0;
         this._pc.atkTimer = 0;
         //this should be treated as a constant :p
@@ -130,7 +132,8 @@ let PCController = function(game, scene, config) {
             let config = {text:"chars", frame:294, destx:x, desty:y, pcx:this._pc.x, pcy:this._pc.y, 
                 range:this._pc.aRange, enemies:this._pc.enemyGroups, layers:scene.layer2, 
                 damage:this._pc.damage, speed:this._pc.speed, myGroup:this._pc.pGroup, 
-                scale:this._pc.pScale, pierce:this._pc.pierce};
+                scale:this._pc.pScale, pierce:this._pc.pierce, coords:this._pc.coords, 
+                fill:this._pc.color};
             //projectile needs to add itself to the pgroup so that its collisions get read
             //it also needs a method to deal its damage to enemy and should check distance from
             //its origin point on update

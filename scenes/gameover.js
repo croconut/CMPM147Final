@@ -16,10 +16,14 @@ class GameOverScene extends Phaser.Scene {
         this.lostText2.setOrigin(0.5);
         this.restartText.setOrigin(0.5);
         //stuff that needs to be reset goes here
+        ggame.shots = 0;
+        game.hits = 0;
         game.level = 1;
         game.score = 0;
+        game.statMax = 10;
         game.kills = 0;
         game.enemySize = 50;
+        game.projBrains = new NEATPopulation(2, 4, null, 10);
         game.npcBrains = new NEATPopulation(6, 1, null, game.enemySize);
         game.playerConfig = {
             text:"chars",frame:303,maxX:100,maxY:100,hp:10,hpMax:10,mana:50, manaMax:50, aSpeed: 300,
@@ -32,7 +36,6 @@ class GameOverScene extends Phaser.Scene {
         if (this.input.keyboard.addKey('SPACE').isDown) {
             this.music.stop();
             this.scene.start("Play");
-
         }
     }
 }

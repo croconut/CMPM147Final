@@ -29,7 +29,7 @@ class TitleScene extends Phaser.Scene {
         game.statMax = 10;
         game.kills = 0;
         game.enemySize = 50;
-        game.projBrains = new NEATPopulation(2, 15, null, 10);
+        game.projBrains = new NEATPopulation(2, 4, null, 10);
         game.npcBrains = new NEATPopulation(6, 1, null, game.enemySize);
         game.playerConfig = {
             text:"chars",frame:303,maxX:100,maxY:100,hp:10,hpMax:10,mana:50, manaMax:50, aSpeed: 300,
