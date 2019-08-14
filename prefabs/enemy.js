@@ -68,10 +68,17 @@ let EnemyController = function(game, scene, config) {
     }
     this.ouch = function(npc, proj) {
         npc.hp -= proj.damage;
-        this.pgroup.remove(proj, true, true);
-        console.log(npc.hp);
+        if (!proj.hit) {
+            proj.hit = true;
+            game.hits++;
+        }
+        proj.pierce--;
+        if (!(proj.pierce > 0)) {
+            this.pgroup.remove(proj, true, true);
+        }
         if (npc.hp <= 0) {
             this.egroup.remove(npc, true, true);
+            game.kills++;
             game.enemySize--;
             game.npcBrains.evo(this.egroup.children.entries);
         }

@@ -41,7 +41,6 @@ class NEATPopulation {
         //when performing fitness checks to evolve
         this.ai = new Neat(this.in, this.out, this.fitnessFn, options);
         this.ai.mutate();
-
     }
 
     assignBrains(sprites) {
@@ -54,19 +53,20 @@ class NEATPopulation {
     
     evo(sprites) {
         //this is pretty similar to the target-seeking example for neataptic
+        this.resetSize(sprites.length);
+        game.npcBrains.assignBrains(sprites);
+    }
+    resetSize(size) {
         this.ai.sort();
-        var newPop = [];
-        //no elitism for now
-        for(let i = 0; i < this.ai.elitism; i++) {
+        let newPop = [];
+        for (let i = 0; i < this.ai.elitism; i++) {
             newPop.push(this.ai.population[i]);
         }
-        
-        for(let i = this.ai.elitism; i < this.ai.population.length; i++) {
+        for(let i = this.ai.elitism; i < size; i++) {
             newPop.push(this.ai.getOffspring());
         }
         this.ai.population = newPop;
         this.ai.mutate();
         this.ai.generation++;
-        game.npcBrains.assignBrains(sprites);
     }
 }
