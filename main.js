@@ -4,6 +4,7 @@ window.onload = function() {
     let title = new TitleScene();
     let boot = new BootScene();
     let gameover = new GameOverScene();
+    let levelup = new LevelUpScene();
     let config = {
         type: Phaser.AUTO,
         width: 800,
@@ -21,6 +22,7 @@ window.onload = function() {
     game.scene.add("Boot", boot);
     game.scene.add("Title", title);
     game.scene.add("Play", Play);
+    game.scene.add("LevelUp", levelup);
     game.scene.add("GameOver", gameover);
     game.scene.start("Boot");
 }

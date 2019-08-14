@@ -1,28 +1,57 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>STABBY MC STAB STAB</title>
-        <link rel="shortcut icon" href="#" />
-        <link rel="stylesheet" type="text/css" href="css/styles.css">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMPM 147 - Project Proposal</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+  <title>CMPM 147 Final Project - STABBED TO DEATH</title>
+  <link rel="shortcut icon" href="#" />
 
-        <!-- Load libraries -->
-        <script type="text/javascript" src="lib/perlin.js"></script>
-        <script type="text/javascript" src="lib/neatapi.js"></script>
-        <script type="text/javascript" src="lib/phaser.min.js"></script>
+  <!-- Load libraries -->
+  <script type="text/javascript" src="lib/perlin.js"></script>
+  <script type="text/javascript" src="lib/neatapi.js"></script>
+  <script type="text/javascript" src="lib/phaser.min.js"></script>
 
-        <!-- Load game -->
-        <script type="text/javascript" src="main.js"></script>
-        <script type="text/javascript" src="scenes/boot.js"></script>
-        <script type="text/javascript" src="scenes/title.js"></script>
-        <script type="text/javascript" src="scenes/play.js"></script>
-        <script type="text/javascript" src="scenes/gameover.js"></script>
-        <script type="text/javascript" src="prefabs/cavegen.js"></script>
-        <script type="text/javascript" src="prefabs/player.js"></script>
-        <script type="text/javascript" src="prefabs/projectile.js"></script>
-        <script type="text/javascript" src="prefabs/enemy.js"></script>
-        <script type="text/javascript" src="prefabs/neatAI.js"></script>
+  <!-- Load game -->
+  <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript" src="scenes/boot.js"></script>
+  <script type="text/javascript" src="scenes/title.js"></script>
+  <script type="text/javascript" src="scenes/play.js"></script>
+  <script type="text/javascript" src="scenes/levelup.js"></script>
+  <script type="text/javascript" src="scenes/gameover.js"></script>
+  <script type="text/javascript" src="prefabs/cavegen.js"></script>
+  <script type="text/javascript" src="prefabs/player.js"></script>
+  <script type="text/javascript" src="prefabs/projectile.js"></script>
+  <script type="text/javascript" src="prefabs/projAI.js"></script>
+  <script type="text/javascript" src="prefabs/enemy.js"></script>
+  <script type="text/javascript" src="prefabs/neatAI.js"></script>
 
-    </head>
-  <body>
-  </body>
+</head>
+<body>
+    <body class="stackedit" style="background-color:grey">
+        <div class="stackedit__html"><h1 id="P1">CMPM147 - Final Project </h1>
+      <h2>What is this? </h2>
+      <p>This is a game that pits you, a lowly mage stuck in a never ending cave system, versus legions of flying swords. 
+        To play the game you'll need to kill swords that come your way and make your way to the exit to increase your final score.
+        After each level you'll get character and weapon upgrades. <br>The controls are WASD to move, left-click to attack, 
+        and right-click to blink.</p>
+      <h2>Generative Methodologies</h2>
+      <p>The map uses cellular automata to give the game space a more natural and varied feeling, with randomly placed swords and psuedo-randomly placed
+        entrance and exit points. The game was created using the Phaser 3 framework, a divergence from my initial decision to use Unity as 
+        creating it in Phaser 3 was faster for me, due to the course being also written in Javascript and the code transferring was pretty 
+        simple compared to finding all the correct tools in Unity. The enemy AI and the player's weapon generation use the Neat class from the neataptic library to, respectively,
+        hunt down the player and create better tools for the player to eliminate enemies. This Neat class is based on the Instinct 
+        neuroevolution algorithm.
+      </p>
+      <h3><a href="https://croconut.github.io/CMPM147FinalProposal/">About</a></h3>
+      <h3><a href="https://github.com/croconut/CMPM147Final">Source Code</a></h3>
+      <blockquote>
+      <p>game by Matthew Stevens<br>
+      UC Santa Cruz<br>
+      credits: <a href="https://freesound.org/people/copyc4t/sounds/141695/">copyc4t</a> level up sounds<br>
+               <a href="https://freesound.org/people/zagi2/sounds/234781/">zagi2</a> game music<br>
+      </p>
+      </blockquote>
+</body>
 </html>
