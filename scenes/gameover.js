@@ -16,7 +16,7 @@ class GameOverScene extends Phaser.Scene {
         this.lostText2.setOrigin(0.5);
         this.restartText.setOrigin(0.5);
         //stuff that needs to be reset goes here
-        ggame.shots = 0;
+        game.shots = 0;
         game.hits = 0;
         game.level = 1;
         game.score = 0;
